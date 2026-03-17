@@ -1,26 +1,22 @@
 <?php
 
 include 'Controller/TaskController.php';
+include 'Controller/HomeController.php';
 
 $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-switch ($url) {
-    case '/':
-        echo "Welcome to the homepage. :)";
-        break;
-    case '/task':
-        TaskController::index();
-        break;
-    case '/task/form':
-        TaskController::form();
-        break;
-        case '/task/form/save':
-            TaskController::save();
-            break;
-        case '/task/delete':
-            TaskController::delete();
-            break;
-    default:
-        http_response_code(404);
-        echo "404 - Page not found";
+$routes = [
+    '/' => 'HomeController@index',
+    '/task' => 'TaskController@index',
+    '/task/form' => 'TaskController@form',
+    '/task/form/save' => 'TaskController@save',
+    '/task/delete' => 'TaskController@delete',
+];
+
+if(isset($routes[$url])){
+    list($controller, $method) = explode('@', $routes[$url]);
+    $controller::$method();
+} else {
+    http_response_code(404);
+    echo "404 - Page not found";
 }
